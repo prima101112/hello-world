@@ -1,0 +1,40 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+)
+
+type Animals struct {
+	Id   int64
+	Name string
+	Age  int64
+	Diet []Food
+}
+
+type Food struct {
+	Id   int64
+	Name string
+}
+
+func main() {
+	fmt.Print("Hello World")
+
+	food1 := []Food{{Id: 1, Name: "pisang"}}
+	food2 := []Food{{Id: 2, Name: "nasi"}}
+
+	animal := Animals{Id: 1, Name: "tikus", Age: 8, Diet: food2}
+	animal2 := Animals{Id: 2, Name: "kera", Age: 2, Diet: food1}
+
+	animals := []Animals{animal, animal2}
+	res, _ := json.Marshal(animals)
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("content-type", "application/json")
+		fmt.Fprintf(w, string(res))
+	})
+
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
